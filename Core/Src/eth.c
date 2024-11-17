@@ -17,16 +17,20 @@
   ******************************************************************************
   */
 /* USER CODE END Header */
+
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "eth.h"
 #include "string.h"
+
+/* USER CODE BEGIN 0 */
+#if 0
 
 ETH_BufferTypeDef Txbuffer[ETH_TX_DESC_CNT * 2U];
 extern ETH_TxPacketConfigTypeDef TxConfig;
 extern ETH_DMADescTypeDef  DMARxDscrTab[]; /* Ethernet Rx DMA Descriptors */
 extern ETH_DMADescTypeDef  DMATxDscrTab[]; /* Ethernet Tx DMA Descriptors */
-
-/* USER CODE BEGIN 0 */
 
 /* USER CODE END 0 */
 
@@ -168,6 +172,7 @@ void HAL_ETH_MspDeInit(ETH_HandleTypeDef* ethHandle)
   }
 }
 
-/* USER CODE BEGIN 1 */
 
+/* USER CODE BEGIN 1 */
+#endif
 /* USER CODE END 1 */

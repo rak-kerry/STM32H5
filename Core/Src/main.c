@@ -1,4 +1,6 @@
 /* USER CODE BEGIN Header */
+/* refer site : https://blog.csdn.net/weixin_67846820/article/details/137764818?spm=1001.2101.3001.6650.7&utm_medium=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-7-137764818-blog-132280827.235%5Ev43%5Epc_blog_bottom_relevance_base2&depth_1-utm_source=distribute.pc_relevant.none-task-blog-2%7Edefault%7EBlogCommendFromBaidu%7ERate-7-137764818-blog-132280827.235%5Ev43%5Epc_blog_bottom_relevance_base2&utm_relevant_index=14 */
+/* https://github.com/STMicroelectronics/stm32h5-classic-coremw-apps */
 /**
   ******************************************************************************
   * @file           : main.c
@@ -64,6 +66,26 @@ RTC_TimeTypeDef sTime;
 RTC_DateTypeDef sDate;
 
 
+
+#ifdef __GNUC__
+  /* With GCC/RAISONANCE, small printf (option LD Linker->Libraries->Small printf
+     set to 'Yes') calls __io_putchar() */
+  #define PUTCHAR_PROTOTYPE int __io_putchar(int ch)
+#else
+  #define PUTCHAR_PROTOTYPE int fputc(int ch, FILE *f)
+#endif /* __GNUC__ */
+
+
+PUTCHAR_PROTOTYPE
+{
+  /* Place your implementation of fputc here */
+  /* e.g. write a character to the EVAL_COM1 and Loop until the end of transmission */
+  HAL_UART_Transmit(&huart1, (uint8_t *)&ch, 1, 0xFFFF);
+
+  return ch;
+}
+
+
 /* USER CODE END 0 */
 
 /**
@@ -97,94 +119,81 @@ int main(void)
   SystemClock_Config();
 
   /* USER CODE BEGIN SysInit */
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_SET);
-  HAL_Delay(10);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_RESET);
-  HAL_Delay(50);
-  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_3, GPIO_PIN_SET);
+
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   MX_ICACHE_Init();
   MX_RTC_Init();
-  MX_ETH_Init();
-  MX_LWIP_Init();
   MX_USART1_UART_Init();
+
   /* USER CODE BEGIN 2 */
-  sprintf( p_out, "Hello\r\n" );
-  p_len = strlen(p_out);
-  HAL_UART_Transmit( &huart1, (uint8_t *) p_out, p_len, 10000); // Debug port
-
-
+  printf("\r\nHiwin 3172 RX node starting\r\n");
+  printf( "Init LwIP ... \r\n" );
+  MX_LWIP_Init();
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
-#if 1   	/* Read RTC */
+
+	MX_LWIP_Process();
+    
+#if 0
+   	/* Read RTC */
     HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
     HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-    sprintf(p_out,"Date: %02d.%02d.%02d\t",sDate.Date,sDate.Month,sDate.Year);
-    p_len = strlen(p_out);
-    HAL_UART_Transmit( &huart1, (uint8_t *) p_out, p_len, 10000); // Debug port
-    sprintf(p_out,"Time: %02d.%02d.%02d\r\n",sTime.Hours,sTime.Minutes,sTime.Seconds);
-    p_len = strlen(p_out);
-    HAL_UART_Transmit( &huart1, (uint8_t *) p_out, p_len, 10000); // Debug port
-#endif
+    printf("Date: %02d.%02d.%02d\t",sDate.Date,sDate.Month,sDate.Year);
+    printf("Time: %02d.%02d.%02d\r\n",sTime.Hours,sTime.Minutes,sTime.Seconds);
+#endif 
 
-	  if ( led_flg == 0 ) {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-		  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-		  //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
-		  led_flg ++;
-	  }
-	  else if ( led_flg == 1) {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
-		  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-		  //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
-		  led_flg ++;
-	  }
-	  else if ( led_flg == 2) {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-		  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-		  //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
-		  led_flg ++;
-	  }
-	  else {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-		  //HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-		  //HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-		  led_flg = 0;
-	  }
+    if ( led_flg == 0 ) 
+    {
+        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+		led_flg ++;
+	}
+	else if ( led_flg == 1) 
+    {
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+		led_flg ++;
+	}
+	else if ( led_flg == 2) 
+    {
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+	    led_flg ++;
+	}
+    else 
+    {
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+	    led_flg = 0;
+	}
 
-	  status_B10 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);
-	  if ( status_B10 != 0 ) {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-	  }
-	  else {
-		  HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-	  }
+	status_B10 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);
+	if ( status_B10 != 0 ) {
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+	}
+	else {
+	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+	}
 
-	  status_A6 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
-	  if ( status_A6 != 0 ) {
-		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-	  }
-	  else {
-		  HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
-	  }
+	status_A6 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
+	if ( status_A6 != 0 ) {
+	    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+	}
+	else {
+	    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+	}
 
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-	sprintf(p_out,"End\r\n" );
-	p_len = strlen(p_out);
-	HAL_UART_Transmit( &huart1, (uint8_t *) p_out, p_len, 10000); // Debug port
+    
 	HAL_Delay(1000);
   }
   /* USER CODE END 3 */

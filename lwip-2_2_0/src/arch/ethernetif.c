@@ -94,10 +94,11 @@ void pbuf_free_custom(struct pbuf *p);
   * @param netif the already initialized lwip network interface structure
   *        for this ethernetif
   */
+  
 static void low_level_init(struct netif *netif)
 {
   uint8_t macaddress[6];
-	macaddress[0] = 0x00;
+  macaddress[0] = 0x00;
   macaddress[1] = 0x80;
   macaddress[2] = 0xE1;
   macaddress[3] = 0x00;
@@ -124,6 +125,8 @@ static void low_level_init(struct netif *netif)
   netif->hwaddr[3] =  EthHandle.Init.MACAddr[3];
   netif->hwaddr[4] =  EthHandle.Init.MACAddr[4];
   netif->hwaddr[5] =  EthHandle.Init.MACAddr[5];
+  printf("MAC address %02X:%02X:%02X:%02X:%02X:%02X \r\n",
+		  netif->hwaddr[0], netif->hwaddr[1], netif->hwaddr[2], netif->hwaddr[3], netif->hwaddr[4], netif->hwaddr[5]);
  
   /* maximum transfer unit */
   netif->mtu = ETH_MAX_PAYLOAD;
@@ -145,9 +148,11 @@ static void low_level_init(struct netif *netif)
   LAN8742_RegisterBusIO(&LAN8742, &LAN8742_IOCtx);
  
   /* Initialize the LAN8742 ETH PHY */
+  printf("Initialize LAN8742 ETH PHY\r\n");
   LAN8742_Init(&LAN8742);
  
   ethernet_link_check_state(netif);
+  
 }
  
 /**
@@ -324,7 +329,7 @@ u32_t sys_now(void)
   * @param  ethHandle: ETH handle
   * @retval None
   */
-#if 0  
+
 void HAL_ETH_MspInit(ETH_HandleTypeDef* ethHandle)
 {
  
@@ -415,7 +420,6 @@ void HAL_ETH_MspDeInit(ETH_HandleTypeDef* ethHandle)
   /* USER CODE END ETH_MspDeInit 1 */
   }
 }
-#endif
  
 /*******************************************************************************
                        PHI IO Functions
@@ -512,40 +516,44 @@ void ethernet_link_check_state(struct netif *netif)
   {
     switch (PHYLinkState)
     {
-    case LAN8742_STATUS_100MBITS_FULLDUPLEX:
-      duplex = ETH_FULLDUPLEX_MODE;
-      speed = ETH_SPEED_100M;
-      linkchanged = 1;
-      break;
-    case LAN8742_STATUS_100MBITS_HALFDUPLEX:
-      duplex = ETH_HALFDUPLEX_MODE;
-      speed = ETH_SPEED_100M;
-      linkchanged = 1;
-      break;
-    case LAN8742_STATUS_10MBITS_FULLDUPLEX:
-      duplex = ETH_FULLDUPLEX_MODE;
-      speed = ETH_SPEED_10M;
-      linkchanged = 1;
-      break;
-    case LAN8742_STATUS_10MBITS_HALFDUPLEX:
-      duplex = ETH_HALFDUPLEX_MODE;
-      speed = ETH_SPEED_10M;
-      linkchanged = 1;
-      break;
-    default:
-      break;
+        case LAN8742_STATUS_100MBITS_FULLDUPLEX:
+          duplex = ETH_FULLDUPLEX_MODE;
+          speed = ETH_SPEED_100M;
+          linkchanged = 1;
+          
+          break;
+        case LAN8742_STATUS_100MBITS_HALFDUPLEX:
+          duplex = ETH_HALFDUPLEX_MODE;
+          speed = ETH_SPEED_100M;
+          linkchanged = 1;
+          break;
+        case LAN8742_STATUS_10MBITS_FULLDUPLEX:
+          duplex = ETH_FULLDUPLEX_MODE;
+          speed = ETH_SPEED_10M;
+          linkchanged = 1;
+          break;
+        case LAN8742_STATUS_10MBITS_HALFDUPLEX:
+          duplex = ETH_HALFDUPLEX_MODE;
+          speed = ETH_SPEED_10M;
+          linkchanged = 1;
+          break;
+        default:
+          break;
     }
- 
+
     if(linkchanged)
     {
       /* Get MAC Config MAC */
-      HAL_ETH_GetMACConfig(&EthHandle, &MACConf);
-      MACConf.DuplexMode = duplex;
-      MACConf.Speed = speed;
-      HAL_ETH_SetMACConfig(&EthHandle, &MACConf);
-      HAL_ETH_Start(&EthHandle);
-      netif_set_up(netif);
-      netif_set_link_up(netif);
+        printf("Ethernet Duplex mode : %s \n\r", duplex == ETH_FULLDUPLEX_MODE ? "Full" : "Half"); 
+        printf("Etnernet Speed : %s \n\r", speed == ETH_SPEED_100M ? "100M" : "10M");
+         
+        HAL_ETH_GetMACConfig(&EthHandle, &MACConf);
+        MACConf.DuplexMode = duplex;
+        MACConf.Speed = speed;
+        HAL_ETH_SetMACConfig(&EthHandle, &MACConf);
+        HAL_ETH_Start(&EthHandle);
+        netif_set_up(netif);
+        netif_set_link_up(netif);
     }
   }
 }
