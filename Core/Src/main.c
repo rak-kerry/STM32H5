@@ -27,6 +27,7 @@
 #include "usart.h"
 #include "gpio.h"
 
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
@@ -136,65 +137,72 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+  uint32_t last = HAL_GetTick();
+
   while (1)
   {
 
 	MX_LWIP_Process();
+
+	tcp_echoclient_connect() ;
     
-#if 0
-   	/* Read RTC */
-    HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-    HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-    printf("Date: %02d.%02d.%02d\t",sDate.Date,sDate.Month,sDate.Year);
-    printf("Time: %02d.%02d.%02d\r\n",sTime.Hours,sTime.Minutes,sTime.Seconds);
-#endif 
 
-    if ( led_flg == 0 ) 
+    if(HAL_GetTick()-last > 1000)
     {
-        HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
-		HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-		led_flg ++;
-	}
-	else if ( led_flg == 1) 
-    {
-	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
-		led_flg ++;
-	}
-	else if ( led_flg == 2) 
-    {
-	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-	    led_flg ++;
-	}
-    else 
-    {
-	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
-	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
-	    led_flg = 0;
-	}
+    	last = HAL_GetTick();
 
-	status_B10 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);
-	if ( status_B10 != 0 ) {
-	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
-	}
-	else {
-	    HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
-	}
+        /* Read RTC */
+        HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+        HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+        printf("Date: %02d.%02d.%02d\t",sDate.Date,sDate.Month,sDate.Year);
+        printf("Time: %02d.%02d.%02d\r\n",sTime.Hours,sTime.Minutes,sTime.Seconds);
 
-	status_A6 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
-	if ( status_A6 != 0 ) {
-	    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
-	}
-	else {
-	    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
-	}
+		if ( led_flg == 0 )
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+			led_flg ++;
+		}
+		else if ( led_flg == 1)
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_SET);
+			led_flg ++;
+		}
+		else if ( led_flg == 2)
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+			led_flg ++;
+		}
+		else
+		{
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_0, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_1, GPIO_PIN_RESET);
+			led_flg = 0;
+		}
 
+		status_B10 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_0);
+		if ( status_B10 != 0 ) {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_SET);
+		}
+		else {
+			HAL_GPIO_WritePin(GPIOB, GPIO_PIN_10, GPIO_PIN_RESET);
+		}
+
+		status_A6 = HAL_GPIO_ReadPin(GPIOC, GPIO_PIN_13);
+		if ( status_A6 != 0 ) {
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_SET);
+		}
+		else {
+			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
+		}
+    }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
     
-	HAL_Delay(1000);
+	HAL_Delay(10);
   }
   /* USER CODE END 3 */
 }

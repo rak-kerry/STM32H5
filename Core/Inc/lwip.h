@@ -22,8 +22,8 @@
 /*设置的IP*/
 #define IP_ADDR0   ((uint8_t) 192U)    /*换为自己需要配置的IP地址*/
 #define IP_ADDR1   ((uint8_t) 168U)
-#define IP_ADDR2   ((uint8_t) 1U)
-#define IP_ADDR3   ((uint8_t) 20U)
+#define IP_ADDR2   ((uint8_t) 20U)
+#define IP_ADDR3   ((uint8_t) 1U)
 
 /*子网掩码*/
 #define NETMASK_ADDR0   ((uint8_t) 255U) /*换为自己需要配置的子网掩码*/
@@ -34,8 +34,8 @@
 /*网关地址*/
 #define GW_ADDR0   ((uint8_t) 192U) /*换为自己需要配置的网关地址*/
 #define GW_ADDR1   ((uint8_t) 168U)
-#define GW_ADDR2   ((uint8_t) 1U)
-#define GW_ADDR3   ((uint8_t) 254U)
+#define GW_ADDR2   ((uint8_t) 20U)
+#define GW_ADDR3   ((uint8_t) 1U)
 
 void MX_LWIP_Init(void);
 void Reset_network(void);
