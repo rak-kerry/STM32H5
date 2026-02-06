@@ -21,12 +21,13 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "eth.h"
+#include "i2c.h"
 #include "icache.h"
 #include "memorymap.h"
 #include "rtc.h"
 #include "usart.h"
 #include "gpio.h"
-
+#include "time.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -128,11 +129,23 @@ int main(void)
   MX_ICACHE_Init();
   MX_RTC_Init();
   MX_USART1_UART_Init();
-
+  MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  printf("\r\nHiwin 3172 RX node starting\r\n");
-  printf( "Init LwIP ... \r\n" );
+  printf("\r\n")
+
+  printf("Init LwIP ... \r\n" );
   MX_LWIP_Init();
+
+  printf("Init EPSON RX8010SJ RTC ... \r\n");
+  RX8010_init();
+  struct tm tmp ;
+  tmp.tm_year = 2026;
+  tmp.tm_mon = 2;
+  tmp.tm_mday = 6;
+  tmp.tm_hour = 22;
+  tmp.tm_min = 25;
+  tmp.tm_sec = 0;
+  rx8010sj_rtc_set(&tmp) ;
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -197,6 +210,11 @@ int main(void)
 		else {
 			HAL_GPIO_WritePin(GPIOA, GPIO_PIN_6, GPIO_PIN_RESET);
 		}
+
+		rx8010sj_rtc_get(&tmp) ;
+		printf("%4d-%02d-%02d %2d:%02d:%02d\r\n",
+	       	tmp.tm_year, tmp.tm_mon, tmp.tm_mday, tmp.tm_hour, tmp.tm_min, tmp.tm_sec);		
+		
     }
     /* USER CODE END WHILE */
 
