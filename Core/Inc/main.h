@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -57,6 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define SDMMC1_CD_Pin GPIO_PIN_14
+#define SDMMC1_CD_GPIO_Port GPIOB
+#define SDMMC1_PWR_EN_Pin GPIO_PIN_8
+#define SDMMC1_PWR_EN_GPIO_Port GPIOA
 
 /* USER CODE BEGIN Private defines */
 

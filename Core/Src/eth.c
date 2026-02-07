@@ -7,7 +7,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -168,7 +168,6 @@ void HAL_ETH_MspDeInit(ETH_HandleTypeDef* ethHandle)
   /* USER CODE END ETH_MspDeInit 1 */
   }
 }
-
 
 /* USER CODE BEGIN 1 */
 #endif

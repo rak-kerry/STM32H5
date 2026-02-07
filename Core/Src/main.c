@@ -8,7 +8,7 @@
   ******************************************************************************
   * @attention
   *
-  * Copyright (c) 2024 STMicroelectronics.
+  * Copyright (c) 2026 STMicroelectronics.
   * All rights reserved.
   *
   * This software is licensed under terms that can be found in the LICENSE file
@@ -25,6 +25,7 @@
 #include "icache.h"
 #include "memorymap.h"
 #include "rtc.h"
+#include "sdmmc.h"
 #include "usart.h"
 #include "gpio.h"
 #include "time.h"
@@ -95,7 +96,6 @@ PUTCHAR_PROTOTYPE
   * @retval int
   */
 
-
 extern void MX_LWIP_Init();
 
 int main(void)
@@ -131,7 +131,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  printf("\r\n");
+  printf("\r\n\r\n");
 
   printf("Init LwIP ... \r\n" );
   MX_LWIP_Init();
@@ -141,11 +141,25 @@ int main(void)
   struct tm tmp ;
   tmp.tm_year = 2026;
   tmp.tm_mon = 2;
-  tmp.tm_mday = 6;
+  tmp.tm_mday = 7;
   tmp.tm_hour = 22;
   tmp.tm_min = 25;
   tmp.tm_sec = 0;
   rx8010sj_rtc_set(&tmp) ;
+
+
+  printf("Init SD ... \r\n" );
+  printf("Enable SD Power \r\n");
+
+  #define SDMMC1_PWR_EN_Pin GPIO_PIN_8
+  #define SDMMC1_PWR_EN_GPIO_Port GPIOA
+
+  HAL_GPIO_WritePin(SDMMC1_PWR_EN_GPIO_Port, SDMMC1_PWR_EN_Pin, GPIO_PIN_SET);
+
+  MX_SDMMC1_SD_Init();
+  MX_FileX_Init();
+  //MX_FileX_Process(); 
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -300,13 +314,13 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+  printf("%s(), %d => forever loop ....  \r\n", __func__, __LINE__);
   while (1)
   {
   }
   /* USER CODE END Error_Handler_Debug */
 }
-
-#ifdef  USE_FULL_ASSERT
+#ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
   *         where the assert_param error has occurred.
