@@ -131,7 +131,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_I2C1_Init();
   /* USER CODE BEGIN 2 */
-  printf("\r\n")
+  printf("\r\n");
 
   printf("Init LwIP ... \r\n" );
   MX_LWIP_Init();
@@ -165,10 +165,10 @@ int main(void)
     	last = HAL_GetTick();
 
         /* Read RTC */
-        HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-        HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-        printf("Date: %02d.%02d.%02d\t",sDate.Date,sDate.Month,sDate.Year);
-        printf("Time: %02d.%02d.%02d\r\n",sTime.Hours,sTime.Minutes,sTime.Seconds);
+        //HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+        //HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+        //printf("Date: %02d.%02d.%02d\t",sDate.Date,sDate.Month,sDate.Year);
+        //printf("Time: %02d.%02d.%02d\r\n",sTime.Hours,sTime.Minutes,sTime.Seconds);
 
 		if ( led_flg == 0 )
 		{
